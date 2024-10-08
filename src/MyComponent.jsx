@@ -39,7 +39,7 @@ export const MyComponent = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (newContact.name && newContact.phoneNo) {
-      setUserContact([...contacts,newContact]);
+      setContacts([...contacts,newContact]);
       setNewContacts({name:"",phoneNo:""});
       toast.success("Contact Created Sucessfully..")
     }
@@ -147,7 +147,7 @@ export const MyComponent = () => {
             <div>
               {filteredContacts.length > 0 ? (
                 <div className="pl-1 pt-3">
-                  {userContact.map((contact) => (
+                  {filteredContacts.map((contact) => (
                     <div className="flex gap-5 border-solid border-2 border-gray-200 mt-2 rounded-xl "key={contact.phoneNo}> 
                     <div className="flex justify-center items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
