@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 export const MyComponent = () => {
-  const username = "Suman";
+  const [username,setUsername] = useState("Akash");
   const hour = new Date().getHours();
-  const [showContacts, setShowContactsBar] = useState(true);
-  const [showHomePage, setShowHomePage] = useState(false);
+  const [showContacts, setShowContactsBar] = useState(false);
+  const [showHomePage, setShowHomePage] = useState(true);
   const [showAddNewContactBar,setShowAddNewContactBar] = useState(false);
   const [searchTerm,setSearchTerm] = useState("");
+  const [userContact,setUserContact] = useState([]);
+  // const [profileEdit,setProfileEdit] = useState(false);
+  // const [editUsername,setEditUsername] = useState(false);
+  // const [editAddress,setEditAddress] = useState(false);
   const [contacts,setContacts] = useState([
-    { name: "Ajith", phoneNo: 1234567890 },
-    { name: "Balaji", phoneNo: 9987654321 },
-    { name: "Basker", phoneNo: 9988776655},
-    {name:"Ankut",phoneNo:8877665544 },
+    { name: "Ajith", phoneNo: 1234567890,username:"Akash" },
+    { name: "Balaji", phoneNo: 9987654321,username:"Akash" },
+    { name: "Basker", phoneNo: 9988776655,username:"Akash"},
+    {name:"Ankut",phoneNo:8877665544,username:"Suman" },
   ]);
   const [newContact,setNewContacts] = useState({name:"",phoneNo:""})
   const greetings = hour > 12 ? "Good evening" : "Good morning";
@@ -35,7 +39,7 @@ export const MyComponent = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (newContact.name && newContact.phoneNo) {
-      setContacts([...contacts,newContact]);
+      setUserContact([...contacts,newContact]);
       setNewContacts({name:"",phoneNo:""});
       toast.success("Contact Created Sucessfully..")
     }
@@ -53,6 +57,22 @@ export const MyComponent = () => {
     contact.name.toLowerCase().startsWith(searchTerm.toLowerCase()) || 
     contact.phoneNo.toString().startsWith(searchTerm)
   );
+
+  useEffect(()=>{
+    const filtered = contacts.filter((contract)=>contract.username === username);
+    setUserContact(filtered);
+  },[username,contacts])
+
+  // const handleUsernameChange = (e) => {
+  //   const newUsername = e.target
+  //   setUsername(newUsername);
+  // }
+
+  // const handleUsernameChangeSubmit = (e) => {
+  //   e.preventDefault()
+  // }
+
+  
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-200">
@@ -98,9 +118,15 @@ export const MyComponent = () => {
               }}>Back</button>
             </div>
             <div className="flex ml-auto">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-              </svg>
+              <button onClick={()=> {
+                setProfileEdit(true);
+                setShowContactsBar(false);
+              }
+              }>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                </svg>
+              </button>
             </div>
           </div>
           <div className="flex flex-col">
@@ -121,7 +147,7 @@ export const MyComponent = () => {
             <div>
               {filteredContacts.length > 0 ? (
                 <div className="pl-1 pt-3">
-                  {filteredContacts.map((contact) => (
+                  {userContact.map((contact) => (
                     <div className="flex gap-5 border-solid border-2 border-gray-200 mt-2 rounded-xl "key={contact.phoneNo}> 
                     <div className="flex justify-center items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
@@ -183,6 +209,49 @@ export const MyComponent = () => {
           </div>
         </div>
       ) : null}
+      {/* {profileEdit ? (
+        <div className="w-96 h-96 p-10 bg-white rounded-lg">
+          <div className="flex flex-col justify-center items-center pt-20">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-10">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+            {editUsername ? (
+              <div className="flex">
+                <p>Username: </p> 
+                <input 
+                type="text"
+                placeholder="Enter new username."
+                value={username}
+                onChange={handleUsernameChange}
+                 />
+                <button onClick={handleUsernameChangeSubmit}>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                </button>
+              </div>
+            ):(
+
+              <div className="flex">
+                <p>Username: {username}</p>
+                <button onClick={()=>{setEditUsername(true)}}>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                  </svg>
+                </button>
+              </div>
+            )}
+            <div className="flex">
+            <p>Address: {""}</p>
+            <button onClick={()=>{setEditAddress(true)}}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+              </svg>
+            </button>
+            </div>
+          </div>      
+        </div>
+      ):null} */}
       <ToastContainer/>
     </div>
   );
